@@ -1,24 +1,147 @@
 """
-Uses text-to-speech and random number generation to help you practice number comprehension in a small range of languages
+Uses text-to-speech and random number generation to help you practice number
+comprehension in a small range of languages
 """
 
 import toga
 from toga.style.pack import COLUMN, ROW
-
+import random
+from gtts import gTTS
+from playsound3 import playsound
 
 class NumberComprehension(toga.App):
     def startup(self):
-        """Construct and show the Toga application.
-
-        Usually, you would add your application to a main content box.
-        We then create a main window (with a name matching the app), and
-        show the main window.
-        """
         main_box = toga.Box()
 
+        # Variables
+        self.run = 0
+        self.number = None
+        self.default_minimum = 0
+        self.minimum = self.default_minimum
+        self.default_maximum = 2100
+        self.maximum = self.default_maximum
+        self.match = False
+        self.number_mp3 = 'number.mp3'
+        self.default_language = 'fr'
+        self.language = self.default_language
+        # self.language_name = 'French'
+        # self.languages = []
+
+        # UI elements
+        self.minimum_label = toga.Label(
+            "Minimum number: ",
+            margin = (0, 5),
+        )
+        self.minimum_input = toga.NumberInput(flex=1, max=(self.maximum-1),
+            value=self.default_minimum, on_change=self.update_minimum)
+
+        self.maximum_label = toga.Label(
+            "Maximum number: ",
+            margin = (0, 5),
+
+        )
+        self.maximum_input = toga.NumberInput(flex=1, min=(self.minimum+1),
+            value=self.default_maximum, on_change=self.update_maximum)
+
+        # TODO: language setting
+        # language_dropdown = toga.Selection(items=self.languages)
+
+        self.begin_button = toga.Button(
+            "Begin",
+            on_press = self.begin,
+            margin = 5,
+        )
+
+        self.repeat_button = toga.Button(
+            "Repeat",
+            on_press = self.repeat,
+        )
+
+        self.guess_label = toga.Label(
+            "Enter what you hear: ",
+            margin = (0, 5),
+        )
+        self.guess_input = toga.TextInput(flex=1, placeholder="Enter number",
+            on_confirm=self.compare_numbers)
+
+        self.feedback_label = toga.Label(
+            "",
+            margin = 5,
+        )
+
+
+        # UI structuring
+        main_box.add(self.minimum_label)
+        main_box.add(self.minimum_input)
+        main_box.add(self.maximum_label)
+        main_box.add(self.maximum_input)
+        main_box.add(self.begin_button)
+        main_box.add(self.repeat_button)
+        main_box.add(self.guess_label)
+        main_box.add(self.guess_input)
+        main_box.add(self.feedback_label)
+
+        # Show the window
         self.main_window = toga.MainWindow(title=self.formal_name)
         self.main_window.content = main_box
         self.main_window.show()
+
+
+    # Functions
+    async def begin(self, widget):
+
+        if self.run:
+            self.run = 0
+            self.begin_button.text = "Begin"
+        elif not self.run:
+            self.run = 1
+            self.begin_button.text = "Stop"
+            await self.new_number(self)
+
+
+    async def repeat(self, widget):
+        await self.speak_number(self)
+
+
+    async def generate_number(self, widget):
+        self.match = False
+        new_number = random.randint(int(self.minimum), int(self.maximum))
+        self.number = new_number
+
+        tts = gTTS(text=f"{self.number}", lang=f"{self.language}")
+        tts.save(self.number_mp3)
+
+
+    async def speak_number(self, widget):
+        playsound(self.number_mp3, False)
+
+
+    async def compare_numbers(self, widget):
+        try:
+            guess = int(self.guess_input.value)
+        except ValueError:
+            return
+
+        if guess > self.number:
+            pass # TODO: Add feedback functionality
+        elif guess < self.number:
+            pass # TODO: Add feedback functionality
+        else:
+            self.match = True
+            self.guess_input.value = ''
+            await self.new_number(self)
+
+    async def new_number(self, widget):
+        if self.run:
+            await self.generate_number(self)
+            await self.speak_number(self)
+
+    async def update_minimum(self, widget):
+        self.minimum = self.minimum_input.value
+
+
+    async def update_maximum(self, widget):
+        self.maximum = self.maximum_input.value
 
 
 def main():
