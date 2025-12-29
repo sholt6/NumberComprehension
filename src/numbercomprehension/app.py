@@ -141,6 +141,7 @@ class NumberComprehension(toga.App):
         try:
             guess = int(self.guess_input.value)
         except ValueError:
+            self.feedback_label.text = "Enter integers only!"
             return
 
         if guess > self.number:
