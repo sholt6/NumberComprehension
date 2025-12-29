@@ -79,7 +79,7 @@ class NumberComprehension(toga.App):
             on_confirm=self.compare_numbers)
 
         self.feedback_label = toga.Label(
-            "Feedback goes here",
+            "",
             margin = 5,
         )
 
@@ -108,6 +108,7 @@ class NumberComprehension(toga.App):
         if self.run:
             self.run = 0
             self.begin_button.text = "Begin"
+            self.feedback_label.text = ""
         elif not self.run:
             self.run = 1
             self.begin_button.text = "Stop"
@@ -119,9 +120,11 @@ class NumberComprehension(toga.App):
 
 
     async def generate_number(self, widget):
+        # Reset some other values first; perhaps move this
         self.match = False
-        new_number = random.randint(int(self.minimum), int(self.maximum))
-        self.number = new_number
+        self.feedback_label.text = ""
+
+        self.number = random.randint(int(self.minimum), int(self.maximum))
 
         tts = gTTS(text=f"{self.number}", lang=f"{self.language_dropdown.value.lang}", tld=f"{self.language_dropdown.value.accent}")
         tts.save(self.number_mp3)
@@ -141,11 +144,11 @@ class NumberComprehension(toga.App):
             return
 
         if guess > self.number:
+            self.feedback_label.text = "Your guess is too high"
             await self.speak_number(self)
-            pass # TODO: Add feedback functionality
         elif guess < self.number:
+            self.feedback_label.text = "Your guess is too low"
             await self.speak_number(self)
-            pass # TODO: Add feedback functionality
         else:
             self.match = True
             self.guess_input.value = ''
