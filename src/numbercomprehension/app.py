@@ -7,7 +7,7 @@ import toga
 from toga.style.pack import COLUMN, ROW
 import random
 from gtts import gTTS
-from playsound3 import playsound
+from playsound3 import playsound, PlaysoundException
 
 class NumberComprehension(toga.App):
     def startup(self):
@@ -129,10 +129,7 @@ class NumberComprehension(toga.App):
     async def speak_number(self, widget):
         try:
             playsound(self.number_mp3, False)
-        # This vague except statement awaits some movement on
-        # https://github.com/szmikler/playsound3/issues/32
-        except:
-            print("PlaySound exception: attempt was made to play mp3 before it exists")
+        except PlaysoundException:
             return
 
 
