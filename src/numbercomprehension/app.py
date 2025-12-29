@@ -5,6 +5,7 @@ comprehension in a small range of languages
 
 import toga
 from toga.style.pack import COLUMN, ROW
+from toga.sources import ListSource
 import random
 from gtts import gTTS
 from playsound3 import playsound, PlaysoundException
@@ -26,19 +27,19 @@ class NumberComprehension(toga.App):
         self.default_language = 'French (France)'
         self.language = self.default_language
         self.language_name = 'French (France)'
-        self.languages = [
-          {"name" : "English (Australia)", "lang" : "en", "accent" : "com.au"},
-          {"name" : "English (United Kingdom)", "lang" : "en", "accent" : "co.uk" },
-          {"name" : "English (United States)", "lang" : "en", "accent" : "us" },
-          {"name" : "French (Canada)", "lang" : "fr", "accent" : "ca" },
-          {"name" : "French (France)", "lang" : "fr", "accent" : "fr" },
-          {"name" : "Mandarin (China Mainland)", "lang" : "zh-CN", "accent" : "com" },
-          {"name" : "Mandarin (Taiwan)", "lang" : "zh-TW", "accent" : "com" },
-          {"name" : "Portuguese (Brazil)", "lang" : "pt", "accent" : "com.br" },
-          {"name" : "Portuguese (Portugal)", "lang" : "pt", "accent" : "pt" },
-          {"name" : "Spanish (Mexico)", "lang" : "es", "accent" : "com.mx" },
-          {"name" : "Spanish (Spain)", "lang" : "es", "accent" : "es" },
-        ]
+        self.languages = toga.sources.ListSource(accessors=["name"], data=[
+            {"name" : "English (Australia)", "lang" : "en", "accent" : "com.au"},
+            {"name" : "English (United Kingdom)", "lang" : "en", "accent" : "co.uk" },
+            {"name" : "English (United States)", "lang" : "en", "accent" : "us" },
+            {"name" : "French (Canada)", "lang" : "fr", "accent" : "ca" },
+            {"name" : "French (France)", "lang" : "fr", "accent" : "fr" },
+            {"name" : "Mandarin (China Mainland)", "lang" : "zh-CN", "accent" : "com" },
+            {"name" : "Mandarin (Taiwan)", "lang" : "zh-TW", "accent" : "com" },
+            {"name" : "Portuguese (Brazil)", "lang" : "pt", "accent" : "com.br" },
+            {"name" : "Portuguese (Portugal)", "lang" : "pt", "accent" : "pt" },
+            {"name" : "Spanish (Mexico)", "lang" : "es", "accent" : "com.mx" },
+            {"name" : "Spanish (Spain)", "lang" : "es", "accent" : "es" }
+        ])
 
         # UI elements
         self.minimum_label = toga.Label(
