@@ -22,10 +22,22 @@ class NumberComprehension(toga.App):
         self.maximum = self.default_maximum
         self.match = False
         self.number_mp3 = 'number.mp3'
-        self.default_language = 'fr'
+        self.default_language = 'French (France)'
         self.language = self.default_language
-        # self.language_name = 'French'
-        # self.languages = []
+        self.language_name = 'French (France)'
+        self.languages = [
+          {"name" : "English (Australia)", "lang" : "en", "accent" : "com.au"},
+          {"name" : "English (United Kingdom)", "lang" : "en", "accent" : "co.uk" },
+          {"name" : "English (United States)", "lang" : "en", "accent" : "us" },
+          {"name" : "French (Canada)", "lang" : "fr", "accent" : "ca" },
+          {"name" : "French (France)", "lang" : "fr", "accent" : "fr" },
+          {"name" : "Mandarin (China Mainland)", "lang" : "zh-CN", "accent" : "com" },
+          {"name" : "Mandarin (Taiwan)", "lang" : "zh-TW", "accent" : "com" },
+          {"name" : "Portuguese (Brazil)", "lang" : "pt", "accent" : "com.br" },
+          {"name" : "Portuguese (Portugal)", "lang" : "pt", "accent" : "pt" },
+          {"name" : "Spanish (Mexico)", "lang" : "es", "accent" : "com.mx" },
+          {"name" : "Spanish (Spain)", "lang" : "es", "accent" : "es" },
+        ]
 
         # UI elements
         self.minimum_label = toga.Label(
@@ -44,7 +56,8 @@ class NumberComprehension(toga.App):
             value=self.default_maximum, on_change=self.update_maximum)
 
         # TODO: language setting
-        # language_dropdown = toga.Selection(items=self.languages)
+        self.language_dropdown = toga.Selection(items=self.languages, accessor="name")
+        self.language_dropdown.value = self.language_dropdown.items.find({"name" : "French (France)"})
 
         self.begin_button = toga.Button(
             "Begin",
@@ -65,7 +78,7 @@ class NumberComprehension(toga.App):
             on_confirm=self.compare_numbers)
 
         self.feedback_label = toga.Label(
-            "",
+            "Feedback goes here",
             margin = 5,
         )
 
@@ -80,6 +93,7 @@ class NumberComprehension(toga.App):
         main_box.add(self.guess_label)
         main_box.add(self.guess_input)
         main_box.add(self.feedback_label)
+        main_box.add(self.language_dropdown)
 
         # Show the window
         self.main_window = toga.MainWindow(title=self.formal_name)
@@ -108,7 +122,7 @@ class NumberComprehension(toga.App):
         new_number = random.randint(int(self.minimum), int(self.maximum))
         self.number = new_number
 
-        tts = gTTS(text=f"{self.number}", lang=f"{self.language}")
+        tts = gTTS(text=f"{self.number}", lang=f"{self.language_dropdown.value.lang}", tld=f"{self.language_dropdown.value.accent}")
         tts.save(self.number_mp3)
 
 
@@ -123,8 +137,10 @@ class NumberComprehension(toga.App):
             return
 
         if guess > self.number:
+            speak_number(self)
             pass # TODO: Add feedback functionality
         elif guess < self.number:
+            speak_number(self)
             pass # TODO: Add feedback functionality
         else:
             self.match = True
