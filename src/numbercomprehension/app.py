@@ -127,7 +127,13 @@ class NumberComprehension(toga.App):
 
 
     async def speak_number(self, widget):
-        playsound(self.number_mp3, False)
+        try:
+            playsound(self.number_mp3, False)
+        # This vague except statement awaits some movement on
+        # https://github.com/szmikler/playsound3/issues/32
+        except:
+            print("PlaySound exception: attempt was made to play mp3 before it exists")
+            return
 
 
     async def compare_numbers(self, widget):
@@ -137,10 +143,10 @@ class NumberComprehension(toga.App):
             return
 
         if guess > self.number:
-            speak_number(self)
+            await self.speak_number(self)
             pass # TODO: Add feedback functionality
         elif guess < self.number:
-            speak_number(self)
+            await self.speak_number(self)
             pass # TODO: Add feedback functionality
         else:
             self.match = True
