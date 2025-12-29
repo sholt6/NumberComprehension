@@ -11,6 +11,7 @@ from playsound3 import playsound
 
 class NumberComprehension(toga.App):
     def startup(self):
+        direction = COLUMN,
         main_box = toga.Box()
 
         # Variables
@@ -21,7 +22,7 @@ class NumberComprehension(toga.App):
         self.default_maximum = 2100
         self.maximum = self.default_maximum
         self.match = False
-        self.number_mp3 = 'number.mp3'
+        self.number_mp3 = self.paths.cache / 'number.mp3'
         self.default_language = 'French (France)'
         self.language = self.default_language
         self.language_name = 'French (France)'
@@ -55,7 +56,6 @@ class NumberComprehension(toga.App):
         self.maximum_input = toga.NumberInput(flex=1, min=(self.minimum+1),
             value=self.default_maximum, on_change=self.update_maximum)
 
-        # TODO: language setting
         self.language_dropdown = toga.Selection(items=self.languages, accessor="name")
         self.language_dropdown.value = self.language_dropdown.items.find({"name" : "French (France)"})
 
