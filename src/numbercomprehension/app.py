@@ -14,7 +14,7 @@ import configparser
 class NumberComprehension(toga.App):
     def startup(self):
         direction = COLUMN,
-        main_box = toga.Box()
+        main_box = toga.Box(direction=COLUMN)
 
 
         # Variables
@@ -47,64 +47,125 @@ class NumberComprehension(toga.App):
 
 
         # UI elements
+        ## Settings
         self.minimum_label = toga.Label(
             "Minimum number: ",
-            margin = (0, 5),
+            margin = 10,
         )
-        self.minimum_input = toga.NumberInput(flex=1, max=(self.maximum-1),
-            value=self.default_minimum, on_change=self.update_minimum)
+
+        self.minimum_input = toga.NumberInput(
+            flex=1,
+            max=(self.maximum-1),
+            value=self.default_minimum,
+            on_change=self.update_minimum,
+            margin = 10,
+            margin_top = 0,
+        )
 
         self.maximum_label = toga.Label(
             "Maximum number: ",
-            margin = (0, 5),
-
+            margin = 10,
         )
-        self.maximum_input = toga.NumberInput(flex=1, min=(self.minimum+1),
-            value=self.default_maximum, on_change=self.update_maximum)
 
+        self.maximum_input = toga.NumberInput(
+            flex=1,
+            min=(self.minimum+1),
+            value=self.default_maximum,
+            on_change=self.update_maximum,
+            margin = 10,
+            margin_top = 0,
+        )
+
+        self.language_settings_label = toga.Label(
+            "Voice language: ",
+            margin = 10,
+        )
+
+        self.language_dropdown = toga.Selection(
+            items=self.languages,
+            accessor="name",
+            margin = 10,
+            margin_top = 0,
+        )
+        self.language_dropdown.value = self.language_dropdown.items.find(self.language)
+
+        self.language_default_button = toga.Button(
+            "Set current language as default",
+            on_press = self.update_default_language,
+            margin = 10,
+            margin_top = 0,
+        )
+
+        ## Controls
         self.begin_button = toga.Button(
             "Begin",
             on_press = self.begin,
-            margin = 5,
+            margin = 10,
         )
 
         self.repeat_button = toga.Button(
             "Repeat",
             on_press = self.repeat,
+            margin = 10,
         )
 
+        ## Answering
         self.guess_label = toga.Label(
             "Enter what you hear: ",
-            margin = (0, 5),
+            margin = 10,
         )
-        self.guess_input = toga.TextInput(flex=1, placeholder="Enter number",
-            on_confirm=self.compare_numbers)
+        self.guess_input = toga.TextInput(
+            flex=1,
+            placeholder="Enter number",
+            on_confirm=self.compare_numbers,
+            margin = 10,
+            margin_top = 0,
+        )
 
         self.feedback_label = toga.Label(
             "",
-            margin = 5,
+            margin = 10,
+            margin_top = 0,
         )
 
-        self.language_dropdown = toga.Selection(items=self.languages, accessor="name")
-        self.language_dropdown.value = self.language_dropdown.items.find(self.language)
-
-        self.language_default_button = toga.Button(
-            "Make current language default",
-            on_press = self.update_default_language
-        )
 
         # UI structuring
-        main_box.add(self.minimum_label)
-        main_box.add(self.minimum_input)
-        main_box.add(self.maximum_label)
-        main_box.add(self.maximum_input)
-        main_box.add(self.begin_button)
-        main_box.add(self.repeat_button)
-        main_box.add(self.guess_label)
-        main_box.add(self.guess_input)
-        main_box.add(self.feedback_label)
-        main_box.add(self.language_dropdown)
-        main_box.add(self.language_default_button)
+        # main_box.add(self.minimum_label)
+        # main_box.add(self.minimum_input)
+        # main_box.add(self.maximum_label)
+        # main_box.add(self.maximum_input)
+        # main_box.add(self.begin_button)
+        # main_box.add(self.repeat_button)
+        # main_box.add(self.guess_label)
+        # main_box.add(self.guess_input)
+        # main_box.add(self.feedback_label)
+        # main_box.add(self.language_dropdown)
+        # main_box.add(self.language_default_button)
+
+        settings_box = toga.Box(direction=COLUMN, margin_top=25, margin_left=15, margin_right=10)
+        settings_box.add(self.minimum_label)
+        settings_box.add(self.minimum_input)
+        settings_box.add(self.maximum_label)
+        settings_box.add(self.maximum_input)
+        settings_box.add(self.language_settings_label)
+        settings_box.add(self.language_dropdown)
+        settings_box.add(self.language_default_button)
+
+        controls_box = toga.Box(direction=COLUMN, margin_top=25, margin_left=25, margin_right=25)
+        controls_box.add(self.begin_button)
+        controls_box.add(self.repeat_button)
+
+        top_box = toga.Box(direction=ROW, margin_bottom=10)
+        top_box.add(controls_box)
+        top_box.add(settings_box)
+
+        results_box = toga.Box(direction=COLUMN, margin_top=10, margin_left=25, margin_right=25)
+        results_box.add(self.guess_label)
+        results_box.add(self.guess_input)
+        results_box.add(self.feedback_label)
+
+        main_box.add(top_box)
+        main_box.add(results_box)
 
         start = toga.Command(
             self.begin,
@@ -196,6 +257,10 @@ class NumberComprehension(toga.App):
 
 
     async def compare_numbers(self, widget):
+        if self.number is None:
+            self.feedback_label.text = "Press 'Begin' to start!"
+            return
+
         try:
             guess = int(self.guess_input.value)
         except ValueError:
