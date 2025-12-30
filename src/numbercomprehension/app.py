@@ -143,7 +143,6 @@ class NumberComprehension(toga.App):
             self.create_config(self, widget)
 
 
-
     async def begin(self, widget):
         if self.run:
             self.run = 0
@@ -156,7 +155,8 @@ class NumberComprehension(toga.App):
 
 
     async def repeat(self, widget):
-        await self.speak_number(self)
+        if self.run:
+            await self.speak_number(self)
 
 
     async def generate_number(self, widget):
