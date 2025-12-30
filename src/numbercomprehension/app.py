@@ -109,19 +109,19 @@ class NumberComprehension(toga.App):
         start = toga.Command(
             self.begin,
             text="Start/stop",
-            shortcut=toga.Key.MOD_1 + "e"
+            shortcut=toga.Key.MOD_1 + "e",
+            order=1
         )
 
         repeat = toga.Command(
             self.repeat,
             text="Repeat number",
-            shortcut=toga.Key.MOD_1 + 'r'
+            shortcut=toga.Key.MOD_1 + 'r',
+            order=2
         )
-
 
         self.main_window = toga.MainWindow()
         self.main_window.toolbar.add(start, repeat)
-
 
 
         # Show the window
