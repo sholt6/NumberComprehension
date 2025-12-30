@@ -9,6 +9,7 @@ from toga.sources import ListSource
 import random
 from gtts import gTTS
 from playsound3 import playsound, PlaysoundException
+import configparser
 
 class NumberComprehension(toga.App):
     def startup(self):
@@ -24,6 +25,7 @@ class NumberComprehension(toga.App):
         self.maximum = self.default_maximum
         self.match = False
         self.number_mp3 = self.paths.cache / 'number.mp3'
+        self.config_file = self.paths.config / 'config.toml'
         self.default_language = 'French (France)'
         self.language = self.default_language
         self.language_name = 'French (France)'
@@ -57,9 +59,6 @@ class NumberComprehension(toga.App):
         self.maximum_input = toga.NumberInput(flex=1, min=(self.minimum+1),
             value=self.default_maximum, on_change=self.update_maximum)
 
-        self.language_dropdown = toga.Selection(items=self.languages, accessor="name")
-        self.language_dropdown.value = self.language_dropdown.items.find({"name" : "French (France)"})
-
         self.begin_button = toga.Button(
             "Begin",
             on_press = self.begin,
@@ -82,6 +81,9 @@ class NumberComprehension(toga.App):
             "",
             margin = 5,
         )
+
+        self.language_dropdown = toga.Selection(items=self.languages, accessor="name")
+        self.language_dropdown.value = self.language_dropdown.items.find(self.language)
 
 
         # UI structuring
@@ -160,11 +162,10 @@ class NumberComprehension(toga.App):
             await self.generate_number(self)
             await self.speak_number(self)
 
-    async def update_minimum(self, widget):
+    def update_minimum(self, widget):
         self.minimum = self.minimum_input.value
 
-
-    async def update_maximum(self, widget):
+    def update_maximum(self, widget):
         self.maximum = self.maximum_input.value
 
 
