@@ -106,6 +106,24 @@ class NumberComprehension(toga.App):
         main_box.add(self.language_dropdown)
         main_box.add(self.language_default_button)
 
+        start = toga.Command(
+            self.begin,
+            text="Start/stop",
+            shortcut=toga.Key.MOD_1 + "e"
+        )
+
+        repeat = toga.Command(
+            self.repeat,
+            text="Repeat number",
+            shortcut=toga.Key.MOD_1 + 'r'
+        )
+
+
+        self.main_window = toga.MainWindow()
+        self.main_window.toolbar.add(start, repeat)
+
+
+
         # Show the window
         self.main_window = toga.MainWindow(title=self.formal_name)
         self.main_window.content = main_box
