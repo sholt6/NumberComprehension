@@ -16,6 +16,7 @@ class NumberComprehension(toga.App):
         direction = COLUMN,
         main_box = toga.Box()
 
+
         # Variables
         self.run = 0
         self.number = None
@@ -28,7 +29,6 @@ class NumberComprehension(toga.App):
         self.config_file = self.paths.config / 'config.toml'
         self.default_language = 'French (France)'
         self.language = self.default_language
-        self.language_name = 'French (France)'
         self.languages = toga.sources.ListSource(accessors=["name"], data=[
             {"name" : "English (Australia)", "lang" : "en", "accent" : "com.au"},
             {"name" : "English (United Kingdom)", "lang" : "en", "accent" : "co.uk" },
@@ -42,6 +42,9 @@ class NumberComprehension(toga.App):
             {"name" : "Spanish (Mexico)", "lang" : "es", "accent" : "com.mx" },
             {"name" : "Spanish (Spain)", "lang" : "es", "accent" : "es" }
         ])
+
+        self.parse_config()
+
 
         # UI elements
         self.minimum_label = toga.Label(
@@ -85,6 +88,10 @@ class NumberComprehension(toga.App):
         self.language_dropdown = toga.Selection(items=self.languages, accessor="name")
         self.language_dropdown.value = self.language_dropdown.items.find(self.language)
 
+        self.language_default_button = toga.Button(
+            "Make current language default",
+            on_press = self.update_default_language
+        )
 
         # UI structuring
         main_box.add(self.minimum_label)
@@ -97,6 +104,7 @@ class NumberComprehension(toga.App):
         main_box.add(self.guess_input)
         main_box.add(self.feedback_label)
         main_box.add(self.language_dropdown)
+        main_box.add(self.language_default_button)
 
         # Show the window
         self.main_window = toga.MainWindow(title=self.formal_name)
@@ -105,8 +113,38 @@ class NumberComprehension(toga.App):
 
 
     # Functions
-    async def begin(self, widget):
+    def parse_config(self):
+        config = configparser.ConfigParser()
 
+        try:
+            config.read(self.config_file)
+            self.language = config['SETTINGS']['PREFERRED_LANGUAGE']
+        except KeyError:
+            self.create_config(self)
+
+
+    def create_config(self, widget, *args):
+        config = configparser.ConfigParser()
+
+        config['SETTINGS'] = {'PREFERRED_LANGUAGE' : self.language}
+        with open(self.config_file, 'w') as config_file:
+            config.write(config_file)
+
+
+    def update_default_language(self, widget):
+        config = configparser.ConfigParser()
+
+        try:
+            config.read(self.config_file)
+            config['SETTINGS']['PREFERRED_LANGUAGE'] = str(self.language_dropdown.value.name)
+            with open(self.config_file, 'w') as config_file:
+                config.write(config_file)
+        except (FileNotFoundError, KeyError):
+            self.create_config(self, widget)
+
+
+
+    async def begin(self, widget):
         if self.run:
             self.run = 0
             self.begin_button.text = "Begin"
