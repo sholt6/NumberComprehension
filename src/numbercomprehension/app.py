@@ -220,6 +220,7 @@ class NumberComprehension(toga.App):
             self.run = 1
             self.begin_button.text = "Stop"
             self.begin_button.background_color = self.stop_button_color
+            self.guess_input.focus()
             await self.new_number(self)
 
 
