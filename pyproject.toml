@@ -2,8 +2,8 @@
 [tool.briefcase]
 project_name = "NumberComprehension"
 bundle = "com.samelted"
-version = "0.0.1"
-url = "https://samelted.com/numbercomprehension"
+version = "0.1.1"
+url = "https://github.com/sholt6/NumberComprehension"
 license.file = "LICENSE"
 author = "Sam Holt"
 author_email = "samueljrholt@gmail.com"
