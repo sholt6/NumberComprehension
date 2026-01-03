@@ -1,6 +1,6 @@
 """
 Uses text-to-speech and random number generation to help you practice number
-comprehension in a small range of languages
+comprehension in a range of languages
 """
 
 import toga
@@ -20,7 +20,6 @@ class NumberComprehension(toga.App):
         direction = COLUMN,
         main_box = toga.Box(direction=ROW, align_items="center", justify_content="center")
 
-
         # Variables
         self.run = 0
         self.number = None
@@ -36,9 +35,9 @@ class NumberComprehension(toga.App):
         self.languages = self.generate_language_source(self)
 
         ## Styling Variables
-        self.box_background_color = color('#333338')
-        self.begin_button_color = color('#6db442')
-        self.stop_button_color = color('#f04a50')
+        #self.box_background_color = color('#333338')
+        #self.begin_button_color = color('#6db442')
+        #self.stop_button_color = color('#f04a50')
 
         # Parse config
         self.parse_config()
@@ -101,8 +100,8 @@ class NumberComprehension(toga.App):
             "Begin",
             on_press = self.begin,
             margin = 10,
-            background_color=self.begin_button_color,
-            font_weight = 'bold',
+            #background_color=self.begin_button_color,
+            #font_weight = 'bold',
 
         )
 
@@ -116,7 +115,7 @@ class NumberComprehension(toga.App):
         self.guess_label = toga.Label(
             "Enter what you hear: ",
             margin = 10,
-            font_weight = 'bold',
+            #font_weight = 'bold',
         )
         self.guess_input = toga.TextInput(
             placeholder="Enter number",
@@ -134,7 +133,7 @@ class NumberComprehension(toga.App):
 
 
         # Interface layout
-        settings_box = toga.Box(direction=COLUMN, margin_top=25, margin_left=15, margin_right=10, background_color=self.box_background_color)
+        settings_box = toga.Box(direction=COLUMN, margin_top=25, margin_left=15, margin_right=10)#, background_color=self.box_background_color)
         settings_box.add(self.minimum_label)
         settings_box.add(self.minimum_input)
         settings_box.add(self.maximum_label)
@@ -143,7 +142,7 @@ class NumberComprehension(toga.App):
         settings_box.add(self.language_dropdown)
         settings_box.add(self.language_default_button)
 
-        controls_box = toga.Box(direction=COLUMN, margin_top=25, margin_left=25, margin_right=25, background_color=self.box_background_color)
+        controls_box = toga.Box(direction=COLUMN, margin_top=25, margin_left=25, margin_right=25)#, background_color=self.box_background_color)
         controls_box.add(self.begin_button)
         controls_box.add(self.repeat_button)
         controls_box.add(self.guess_label)
