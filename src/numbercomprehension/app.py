@@ -213,12 +213,12 @@ class NumberComprehension(toga.App):
         if self.run:
             self.run = 0
             self.begin_button.text = "Begin"
-            self.begin_button.background_color = self.begin_button_color
+            #self.begin_button.background_color = self.begin_button_color
             self.feedback_label.text = ""
         elif not self.run:
             self.run = 1
             self.begin_button.text = "Stop"
-            self.begin_button.background_color = self.stop_button_color
+            #self.begin_button.background_color = self.stop_button_color
             self.guess_input.focus()
             await self.new_number(self)
 
