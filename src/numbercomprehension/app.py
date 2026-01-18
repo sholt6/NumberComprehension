@@ -230,6 +230,7 @@ class NumberComprehension(toga.App):
         try:
             playsound(self.number_mp3, False)
         except PlaysoundException:
+            self.feedback_label.text = "Could not play sound for unknown reason"
             return
 
 
