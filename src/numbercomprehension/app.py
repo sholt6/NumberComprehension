@@ -21,7 +21,7 @@ class NumberComprehension(toga.App):
 
         # Variables
         self.run = 0
-        self.number = None
+        self.thousands_separator = ''
         self.default_minimum = 0
         self.minimum = self.default_minimum
         self.default_maximum = 2100
@@ -29,9 +29,17 @@ class NumberComprehension(toga.App):
         self.match = False
         self.number_mp3 = self.paths.cache / 'number.mp3'
         self.config_file = self.paths.config / 'config.toml'
+
+        self.languages = generate_language_source()
         self.default_language = 'French (France)'
         self.language = self.default_language
-        self.languages = generate_language_source()
+
+        self.number = None
+        self.num_types  = generate_num_type_source()
+        self.thousands_separators = generate_thousands_separator_source()
+        self.thousands_separator = ""
+        self.num_type = 'Ordinal'
+
 
         ## Styling Variables
         #self.box_background_color = color('#333338')
@@ -43,10 +51,30 @@ class NumberComprehension(toga.App):
 
         # UI elements
         ## Settings
+        self.language_settings_label = toga.Label(
+            "Voice language: ",
+            margin=10,
+            font_weight='bold',
+        )
+
+        self.language_dropdown = toga.Selection(
+            items=self.languages,
+            accessor="name",
+            margin=10,
+            margin_top=0,
+        )
+        self.language_dropdown.value = self.language_dropdown.items.find(self.language)
+
+        self.number_settings_label = toga.Label(
+            "Number settings: ",
+            margin=10,
+            font_weight='bold',
+        )
+
+
         self.minimum_label = toga.Label(
             "Minimum number: ",
-            margin = 10,
-            font_weight = 'bold',
+            margin=10,
         )
 
         self.minimum_input = toga.NumberInput(
@@ -54,14 +82,13 @@ class NumberComprehension(toga.App):
             max=(self.maximum-1),
             value=self.default_minimum,
             on_change=self.update_minimum,
-            margin = 10,
-            margin_top = 0,
+            margin=10,
+            margin_top=0,
         )
 
         self.maximum_label = toga.Label(
             "Maximum number: ",
-            margin = 10,
-            font_weight = 'bold',
+            margin=10,
         )
 
         self.maximum_input = toga.NumberInput(
@@ -69,76 +96,85 @@ class NumberComprehension(toga.App):
             min=(self.minimum+1),
             value=self.default_maximum,
             on_change=self.update_maximum,
-            margin = 10,
-            margin_top = 0,
+            margin=10,
+            margin_top=0,
         )
-
-        self.language_settings_label = toga.Label(
-            "Voice language: ",
-            margin = 10,
-            font_weight = 'bold',
-        )
-
-        self.language_dropdown = toga.Selection(
-            items=self.languages,
-            accessor="name",
-            margin = 10,
-            margin_top = 0,
-        )
-        self.language_dropdown.value = self.language_dropdown.items.find(self.language)
 
         self.language_default_button = toga.Button(
             "Set current language as default",
-            on_press = self.update_default_language,
-            margin = 10,
-            margin_top = 0,
+            on_press=self.update_default_language,
+            margin=10,
+            margin_top=0,
         )
+
+        self.num_type_label = toga.Label(
+            "Number type:",
+            margin=10,
+        )
+
+        self.thousands_separator_dropdown = toga.Selection(
+            items=self.thousands_separators,
+            accessor="name",
+            margin=10
+        )
+        self.thousands_separator_dropdown.value = self.thousands_separator_dropdown.items.find(self.thousands_separator)
+
+        self.num_type_dropdown = toga.Selection(
+            items=self.num_types,
+            accessor="name",
+            margin=10,
+        )
+        self.num_type_dropdown.value = self.num_type_dropdown.items.find(self.num_type)
 
         ## Controls
         self.begin_button = toga.Button(
             "Begin",
-            on_press = self.begin,
-            margin = 10,
+            on_press=self.begin,
+            margin=10,
             #background_color=self.begin_button_color,
             #font_weight = 'bold',
         )
 
         self.repeat_button = toga.Button(
             "Repeat",
-            on_press = self.repeat,
-            margin = 10,
+            on_press=self.repeat,
+            margin=10,
         )
 
         ## Answering
         self.guess_label = toga.Label(
             "Enter what you hear: ",
-            margin = 10,
+            margin=10,
             #font_weight = 'bold',
         )
         self.guess_input = toga.TextInput(
             placeholder="Enter number",
             on_confirm=self.compare_numbers,
-            margin = 10,
-            margin_top = 0,
-            width = 200
+            margin=10,
+            margin_top=0,
+            width=200
         )
 
         self.feedback_label = toga.Label(
             "",
-            margin = 10,
-            margin_top = 0,
+            margin=10,
+            margin_top=0,
         )
 
 
         # Interface layout
         settings_box = toga.Box(direction=COLUMN, margin_top=25, margin_left=15, margin_right=10)#, background_color=self.box_background_color)
+        settings_box.add(self.language_settings_label)
+        settings_box.add(self.language_dropdown)
+        settings_box.add(self.language_default_button)
+
+        settings_box.add(self.number_settings_label)
         settings_box.add(self.minimum_label)
         settings_box.add(self.minimum_input)
         settings_box.add(self.maximum_label)
         settings_box.add(self.maximum_input)
-        settings_box.add(self.language_settings_label)
-        settings_box.add(self.language_dropdown)
-        settings_box.add(self.language_default_button)
+        settings_box.add(self.num_type_label)
+        settings_box.add(self.num_type_dropdown)
 
         controls_box = toga.Box(direction=COLUMN, margin_top=25, margin_left=25, margin_right=25)#, background_color=self.box_background_color)
         controls_box.add(self.begin_button)
@@ -264,6 +300,8 @@ class NumberComprehension(toga.App):
             self.number = await generate_number(self.minimum, self.maximum,
                                                 self.language_dropdown.value.lang,
                                                 self.language_dropdown.value.accent,
+                                                self.num_type_dropdown.value,
+                                                self.thousands_separator_dropdown.value,
                                                 self.number_mp3)
             await self.speak_number(self)
 
