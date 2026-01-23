@@ -7,13 +7,37 @@ from gtts import gTTS
 import num2words
 
 
-async def generate_number(minimum, maximum, language, accent, number_mp3):
+async def generate_number(minimum, maximum, language, accent, num_type, thousands_separator, number_mp3):
     number = random.randint(int(minimum), int(maximum))
+
+    number_tts = ''
 
     tts = gTTS(text=f"{number}", lang=f"{language}", tld=f"{accent}")
     tts.save(number_mp3)
 
     return number
+
+
+def generate_num_type_source():
+    return toga.sources.ListSource(accessors=["name"], data=[
+        {"name" : "Cardinal", "type" : "cardinal" },
+        {"name" : "Cardinal (Num2Words)" , "type" : "cardinaln2w" },
+        {"name" : "Ordinal", "type" : "ordinal" },
+        {"name" : "Currency", "type" : "currency" },
+        {"name" : "Year", "type" : "year" },
+    ])
+
+
+def generate_thousands_separator_source():
+    return toga.sources.ListSource(accessors=["name"], data=[
+        {"name" : "None", "char" : "" },
+        {"name" : "Comma (,)", "char" : "," },
+        {"name" : "Dot (.)", "char" : "." },
+        {"name" : "Apostrophe (')", "char" : "''" },
+        {"name" : "Underscore (_)", "char" : "_" },
+        {"name" : "Space ( )", "char" : " " },
+    ])
+
 
 
 def generate_language_source():
