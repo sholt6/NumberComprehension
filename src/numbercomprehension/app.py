@@ -21,7 +21,6 @@ class NumberComprehension(toga.App):
 
         # Variables
         self.run = 0
-        self.thousands_separator = ''
         self.default_minimum = 0
         self.minimum = self.default_minimum
         self.default_maximum = 2100
@@ -37,8 +36,8 @@ class NumberComprehension(toga.App):
         self.number = None
         self.num_types  = generate_num_type_source()
         self.thousands_separators = generate_thousands_separator_source()
-        self.thousands_separator = ""
-        self.num_type = 'Ordinal'
+        self.thousands_separator = 'None'
+        self.num_type = 'Cardinal'
 
 
         ## Styling Variables
@@ -60,17 +59,24 @@ class NumberComprehension(toga.App):
         self.language_dropdown = toga.Selection(
             items=self.languages,
             accessor="name",
+            on_change=self.harmonise_number_settings,
             margin=10,
             margin_top=0,
         )
         self.language_dropdown.value = self.language_dropdown.items.find(self.language)
+
+        self.language_default_button = toga.Button(
+            "Set current language as default",
+            on_press=self.update_default_language,
+            margin=10,
+            margin_top=0,
+        )
 
         self.number_settings_label = toga.Label(
             "Number settings: ",
             margin=10,
             font_weight='bold',
         )
-
 
         self.minimum_label = toga.Label(
             "Minimum number: ",
@@ -100,31 +106,33 @@ class NumberComprehension(toga.App):
             margin_top=0,
         )
 
-        self.language_default_button = toga.Button(
-            "Set current language as default",
-            on_press=self.update_default_language,
+        self.num_type_label = toga.Label(
+            "Number type:",
+            margin=10,
+        )
+
+        self.num_type_dropdown = toga.Selection(
+            items=self.num_types,
+            accessor="name",
+            on_change=self.harmonise_number_settings,
             margin=10,
             margin_top=0,
         )
+        self.num_type_dropdown.value = self.num_type_dropdown.items.find(self.num_type)
 
-        self.num_type_label = toga.Label(
-            "Number type:",
+        self.thousands_separator_label = toga.Label(
+            "Thousands separator:",
             margin=10,
         )
 
         self.thousands_separator_dropdown = toga.Selection(
             items=self.thousands_separators,
             accessor="name",
-            margin=10
+            on_change=self.harmonise_number_settings,
+            margin=10,
+            margin_top=0,
         )
         self.thousands_separator_dropdown.value = self.thousands_separator_dropdown.items.find(self.thousands_separator)
-
-        self.num_type_dropdown = toga.Selection(
-            items=self.num_types,
-            accessor="name",
-            margin=10,
-        )
-        self.num_type_dropdown.value = self.num_type_dropdown.items.find(self.num_type)
 
         ## Controls
         self.begin_button = toga.Button(
@@ -175,6 +183,8 @@ class NumberComprehension(toga.App):
         settings_box.add(self.maximum_input)
         settings_box.add(self.num_type_label)
         settings_box.add(self.num_type_dropdown)
+        settings_box.add(self.thousands_separator_label)
+        settings_box.add(self.thousands_separator_dropdown)
 
         controls_box = toga.Box(direction=COLUMN, margin_top=25, margin_left=25, margin_right=25)#, background_color=self.box_background_color)
         controls_box.add(self.begin_button)
@@ -310,6 +320,22 @@ class NumberComprehension(toga.App):
 
     def update_maximum(self, widget):
         self.maximum = self.maximum_input.value
+
+    async def harmonise_number_settings(self, widget):
+        num2words = self.language_dropdown.value.num2words
+        basic = 1 if self.num_type_dropdown.value.name == 'Cardinal' else 0
+
+        if num2words:
+            self.num_type_dropdown.enabled = True
+        else:
+            self.num_type_dropdown.value = self.num_type_dropdown.items.find('Cardinal')
+            self.num_type_dropdown.enabled = False
+
+        if basic:
+            self.thousands_separator_dropdown.enabled = True
+        else:
+            self.thousands_separator_dropdown.value = self.thousands_separator_dropdown.items.find('None')
+            self.thousands_separator_dropdown.enabled = False
 
 
 def main():
