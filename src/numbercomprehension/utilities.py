@@ -10,9 +10,12 @@ import num2words
 async def generate_number(minimum, maximum, language, accent, num_type, thousands_separator, number_mp3):
     number = random.randint(int(minimum), int(maximum))
 
-    number_tts = ''
+    if num_type.type == 'cardinal':
+        number_tts = f"{number:,}".replace(',', f"{thousands_separator}")
+    else:
+        number_tts = num2words(number, to=num_type, lang=lang)
 
-    tts = gTTS(text=f"{number}", lang=f"{language}", tld=f"{accent}")
+    tts = gTTS(text=f"{number_tts}", lang=f"{language}", tld=f"{accent}")
     tts.save(number_mp3)
 
     return number
@@ -33,11 +36,10 @@ def generate_thousands_separator_source():
         {"name" : "None", "char" : "" },
         {"name" : "Comma (,)", "char" : "," },
         {"name" : "Dot (.)", "char" : "." },
-        {"name" : "Apostrophe (')", "char" : "''" },
+        {"name" : "Apostrophe (')", "char" : "'" },
         {"name" : "Underscore (_)", "char" : "_" },
         {"name" : "Space ( )", "char" : " " },
     ])
-
 
 
 def generate_language_source():
