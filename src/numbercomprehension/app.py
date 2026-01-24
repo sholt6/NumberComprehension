@@ -311,7 +311,7 @@ class NumberComprehension(toga.App):
                                                 self.language_dropdown.value.lang,
                                                 self.language_dropdown.value.accent,
                                                 self.num_type_dropdown.value,
-                                                self.thousands_separator_dropdown.value,
+                                                self.thousands_separator_dropdown.value.char,
                                                 self.number_mp3)
             await self.speak_number(self)
 
