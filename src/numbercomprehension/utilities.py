@@ -4,16 +4,19 @@ import toga
 from toga.sources import ListSource
 
 from gtts import gTTS
-import num2words
+from num2words import num2words
 
 
-async def generate_number(minimum, maximum, language, accent, num_type, thousands_separator, number_mp3):
+async def generate_number(minimum, maximum, language, accent, num2words_lang, num_type, thousands_separator, number_mp3):
     number = random.randint(int(minimum), int(maximum))
 
-    if num_type.type == 'cardinal':
+    if num_type.type == 'cardinal_basic':
         number_tts = f"{number:,}".replace(',', f"{thousands_separator}")
-    else:
-        number_tts = num2words(number, to=num_type, lang=lang)
+    elif num2words_lang:
+        try:
+            number_tts = num2words(number, to=num_type.type, lang=num2words_lang)
+        except NotImplementedError:
+            return """Apologies, this number type \n is not implemented for your \n selected language"""
 
     tts = gTTS(text=f"{number_tts}", lang=f"{language}", tld=f"{accent}")
     tts.save(number_mp3)
@@ -23,8 +26,8 @@ async def generate_number(minimum, maximum, language, accent, num_type, thousand
 
 def generate_num_type_source():
     return toga.sources.ListSource(accessors=["name"], data=[
-        {"name" : "Cardinal", "type" : "cardinal" },
-        {"name" : "Cardinal (Num2Words)" , "type" : "cardinaln2w" },
+        {"name" : "Cardinal (Default)", "type" : "cardinal_basic" },
+        {"name" : "Cardinal (Num2Words)" , "type" : "cardinal" },
         {"name" : "Ordinal", "type" : "ordinal" },
         {"name" : "Currency", "type" : "currency" },
         {"name" : "Year", "type" : "year" },

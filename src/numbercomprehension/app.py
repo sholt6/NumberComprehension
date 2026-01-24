@@ -37,7 +37,8 @@ class NumberComprehension(toga.App):
         self.num_types  = generate_num_type_source()
         self.thousands_separators = generate_thousands_separator_source()
         self.thousands_separator = 'None'
-        self.num_type = 'Cardinal'
+        self.default_num_type = 'Cardinal (Default)'
+        self.num_type = self.default_num_type
 
 
         ## Styling Variables
@@ -310,10 +311,16 @@ class NumberComprehension(toga.App):
             self.number = await generate_number(self.minimum, self.maximum,
                                                 self.language_dropdown.value.lang,
                                                 self.language_dropdown.value.accent,
+                                                self.language_dropdown.value.num2words_lang,
                                                 self.num_type_dropdown.value,
                                                 self.thousands_separator_dropdown.value.char,
                                                 self.number_mp3)
-            await self.speak_number(self)
+            try:
+                int(self.number)
+                await self.speak_number(self)
+            except ValueError:
+                self.feedback_label.text = self.number
+
 
     def update_minimum(self, widget):
         self.minimum = self.minimum_input.value
@@ -323,12 +330,12 @@ class NumberComprehension(toga.App):
 
     async def harmonise_number_settings(self, widget):
         num2words = self.language_dropdown.value.num2words
-        basic = 1 if self.num_type_dropdown.value.name == 'Cardinal' else 0
+        basic = 1 if self.num_type_dropdown.value.name == self.default_num_type else 0
 
         if num2words:
             self.num_type_dropdown.enabled = True
         else:
-            self.num_type_dropdown.value = self.num_type_dropdown.items.find('Cardinal')
+            self.num_type_dropdown.value = self.num_type_dropdown.items.find(self.default_num_type)
             self.num_type_dropdown.enabled = False
 
         if basic:
