@@ -303,6 +303,7 @@ class NumberComprehension(toga.App):
             self.guess_input.value = ''
             await self.new_number(self)
 
+
     async def new_number(self, widget):
         if self.run:
             self.match = False
@@ -323,10 +324,20 @@ class NumberComprehension(toga.App):
 
 
     def update_minimum(self, widget):
-        self.minimum = self.minimum_input.value
+        try:
+            self.minimum = self.minimum_input.value
+            self.maximum_input.min = self.minimum_input.value + 1
+        except TypeError:
+            self.maximum_input.min = 1
+
 
     def update_maximum(self, widget):
-        self.maximum = self.maximum_input.value
+        try:
+            self.maximum = self.maximum_input.value
+            self.minimum_input.max = self.maximum_input.value - 1
+        except TypeError:
+            self.minimum_input.max = 0
+
 
     async def harmonise_number_settings(self, widget):
         num2words = self.language_dropdown.value.num2words
