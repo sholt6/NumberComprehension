@@ -23,7 +23,8 @@ test_sources = [
 requires = [
     "gtts",
     "playsound3",
-    "configparser"
+    "configparser",
+    "num2words"
 ]
 test_requires = [
     "pytest",
