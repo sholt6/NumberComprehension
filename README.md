@@ -22,6 +22,11 @@ If you are incorrect, some feedback will be provided.
 
 If you wish to hear the number again, press 'Repeat' or press Ctrl/Cmd+R.
 
+Some languages have additional modes which allow you to hear numbers spoken in different ways.
+In all cases, the correct answer is still the the cardinal number, e.g.:
+- "One hundred and twenty"  =>  120
+- "One hundred and **twentieth**"  => 120
+- "One Pound and twenty pence"  =>  120
 
 ## Settings features
 **Default language:** pressing the 'Set current language as default' button will do as described: the next time you open the app, the currently selected language will already be set.
@@ -39,6 +44,8 @@ If you wish to hear the number again, press 'Repeat' or press Ctrl/Cmd+R.
 **Thousands separator:** depending on the language you are using, you may get more useful results if you use one of these when working with numbers >999. Since languages vary in what they use as a thousands separator, the following are all available: `[_,.' ]`.
 The default is to use none, and the setting is only relevant when using the 'Cardinal (Default)' number type setting.
 
+## Known issues
+- At present, regardless of chosen language, the currency setting will be spoken in Euros
 
 # Supported languages
 The following languages are all supported by this app, in some cases with multiple accents/dialects.
